@@ -415,7 +415,7 @@ definitions:
         properties:
           charging_state:
             type: string
-            description: "Charging", "Disconnected", ??
+            description: '"Charging", "Disconnected", ...'
           charge_limit_soc:
             type: integer
           charge_limit_soc_std:
@@ -605,18 +605,18 @@ definitions:
         properties:
           gui_distance_units:
             type: string
-            description: "km/hr", "mi/hr"
+            description: '"km/hr", "mi/hr"'
           gui_temperature_units:
             type: string
-            description: "C", "F"
+            description: '"C", "F"'
           gui_charge_rate_units:
             type: string
-            description: "km/hr", "mi/hr"
+            description: '"km/hr", "mi/hr"'
           gui_24_hour_time:
             type: boolean
           gui_range_display:
             type: string
-            description: "Rated", "Ideal"
+            description: '"Rated", "Ideal", ...'
     required:
       - response
   VehicleStateResponse:
@@ -646,16 +646,16 @@ definitions:
           dark_rims:
             type: boolean
           df:
-            type: boolean
-            description: driver's side front door open
+            type: integer
+            description: boolean - driver's side front door open
           dr:
-            type: boolean
-            description: driver's side rear door open
+            type: integer
+            description: boolean - driver's side rear door open
           exterior_color:
             type: string
           ft:
-            type: boolean
-            description: front trunk is open
+            type: integer
+            description: boolean - front trunk is open
           has_spoiler:
             type: boolean
           homelink_nearby:
@@ -672,7 +672,7 @@ definitions:
             type: boolean
           perf_config:
             type: string
-            description: "P1", "Base", ...
+            description: '"P1", "Base", ...'
           pf:
             type: integer
             description: passenger's side front door open
