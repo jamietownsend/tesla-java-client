@@ -1,0 +1,735 @@
+swagger: '2.0'
+info:
+  version: '1.0'
+  title: Tesla REST API
+  description: 'Unofficial and unsupported (but currently working) REST API for monitoring and controlling Tesla Vehicles'
+  license:
+    name: Apache License Version 2.0
+    url: 'https://www.apache.org/licenses/LICENSE-2.0'
+host: owner-api.teslamotors.com
+basePath: /
+schemes:
+  - https
+consumes:
+  - application/json
+produces:
+  - application/json
+paths:
+  /oauth/token:
+    post:
+      description: >-
+        Performs the login. Takes in an plain text email and password, matching
+        the owner's login information for
+        [https://my.teslamotors.com/user/login](https://my.teslamotors.com/user/login).
+
+        Returns an `access_token` which is passed along as a header with all
+        future requests to authenticate the user.
+
+        You must provide the `Authorization: Bearer {access_token}` header in
+        all other requests.
+
+        The current client ID and secret are [available
+        here](http://pastebin.com/fX6ejAHd)
+      tags:
+        - Authentication
+      operationId: Get an Access Token
+      produces:
+        - application/json
+      parameters:
+        - name: access_token_input
+          in: body
+          description: Attributes of the access token
+          schema:
+            required:
+              - grant_type
+              - client_id
+              - client_secret
+              - email
+              - password
+            properties:
+              grant_type:
+                type: string
+                description: The type of oAuth grant. Always "password"
+                default: password
+              client_id:
+                type: string
+                description: The oAuth client ID
+                default: e4a9949fcfa04068f59abb5a658f2bac0a3428e4652315490b659d5ab3f35a9e
+              client_secret:
+                type: string
+                description: The oAuth client secret
+                default: c75f14bbadc8bee3a7594412c31416f8300256d7668ea7e6e7f06727bfb9d220
+              email:
+                type: string
+                description: The email for my.teslamotors.com
+                default: elon@teslamotors
+              password:
+                type: string
+                description: The password for my.teslamotors.com
+                default: edisonsux
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/GetAnAccessTokenResponse'
+      x-unitTests:
+        - request:
+            method: POST
+            uri: /oauth/token
+          expectedResponse:
+            x-allowExtraHeaders: true
+            x-bodyMatchMode: KEYS
+            x-arrayOrderedMatching: false
+            x-arrayCheckCount: false
+            x-matchResponseSchema: true
+            headers:
+              Content-Type: application/json
+            body: >-
+              {  "access_token": "abc123",  "token_type": "bearer",
+              "expires_in": 7776000,  "created_at": 1457385291,  "refresh_token"
+              : "cba321"}
+          x-testShouldPass: true
+          x-testEnabled: true
+          x-testName: Get an Access Token1
+          x-testDescription: >-
+            Performs the login. Takes in an plain text email and password,
+            matching the owner's login information for
+            [https://my.teslamotors.com/user/login](https://my.teslamotors.com/user/login).
+
+            Returns a `access_token` which is passed along as a header with all
+            future requests to authenticate the user.
+
+            You must provide the `Authorization: Bearer {access_token}` header
+            in all other requests.
+
+            The current client ID and secret are [available
+            here](http://pastebin.com/fX6ejAHd)
+      x-operation-settings:
+        CollectParameters: false
+        AllowDynamicQueryParameters: false
+        AllowDynamicFormParameters: false
+        IsMultiContentStreaming: false
+  /api/1/vehicles:
+    get:
+      description: Retrieve a list of your owned vehicles (includes vehicles not yet shipped!)
+      tags:
+        - Vehicles
+      operationId: List All Vehicles
+      produces:
+        - application/json
+      parameters:
+        - $ref: "#/parameters/authorization_header"
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/ListAllVehiclesResponse'
+      x-unitTests:
+        - request:
+            method: GET
+            uri: /api/1/vehicles
+          expectedResponse:
+            x-allowExtraHeaders: true
+            x-bodyMatchMode: KEYS
+            x-arrayOrderedMatching: false
+            x-arrayCheckCount: false
+            x-matchResponseSchema: true
+            headers:
+              Content-Type: application/json
+            body: >-
+              {  "response": [{    "color": null,    "display_name": null,
+              "id": 321,    "option_codes":
+              "MS01,RENA,TM00,DRLH,PF00,BT85,PBCW,RFPO,WT19,IBMB,IDPB,TR00,SU01,SC01,TP01,AU01,CH00,HP00,PA00,PS00,AD02,X020,X025,X001,X003,X007,X011,X013",
+              "user_id": 123,    "vehicle_id": 1234567890,    "vin":
+              "5YJSA1CN5CFP01657",    "tokens": ["x", "x"],    "state":
+              "online"  }],  "count":1}
+          x-testShouldPass: true
+          x-testEnabled: true
+          x-testName: List all Vehicles1
+          x-testDescription: >-
+            Retrieve a list of your owned vehicles (includes vehicles not yet
+            shipped!)
+      x-operation-settings:
+        CollectParameters: false
+        AllowDynamicQueryParameters: false
+        AllowDynamicFormParameters: false
+        IsMultiContentStreaming: false
+  '/api/1/vehicles/{vehicle_id}/mobile_enabled':
+    get:
+      description: Determines if mobile access to the vehicle is enabled.
+      tags:
+        - Vehicles
+      operationId: Is Mobile Enabled
+      produces:
+        - application/json
+      parameters:
+        - $ref: "#/parameters/authorization_header"
+        - $ref: "#/parameters/vehicle_id"
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/MobileAccessResponse'
+      x-unitTests:
+        - request:
+            method: GET
+            uri: /api/1/vehicles/1/mobile_enabled
+          expectedResponse:
+            x-allowExtraHeaders: true
+            x-bodyMatchMode: KEYS
+            x-arrayOrderedMatching: false
+            x-arrayCheckCount: false
+            x-matchResponseSchema: true
+            headers:
+              Content-Type: application/json
+            body: '{    "response": true}'
+          x-testShouldPass: true
+          x-testEnabled: true
+          x-testName: Mobile Access1
+          x-testDescription: Determines if mobile access to the vehicle is enabled.
+      x-operation-settings:
+        CollectParameters: false
+        AllowDynamicQueryParameters: false
+        AllowDynamicFormParameters: false
+        IsMultiContentStreaming: false
+  '/api/1/vehicles/{vehicle_id}/data_request/charge_state':
+    get:
+      description: Returns the state of charge in the battery.
+      tags:
+        - Vehicles
+      operationId: Get Charge State
+      produces:
+        - application/json
+      parameters:
+        - $ref: "#/parameters/authorization_header"
+        - $ref: "#/parameters/vehicle_id"
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/ChargeStateResponse'
+      x-unitTests: []
+      x-operation-settings:
+        CollectParameters: false
+        AllowDynamicQueryParameters: false
+        AllowDynamicFormParameters: false
+        IsMultiContentStreaming: false
+  '/api/1/vehicles/{vehicle_id}/data_request/climate_state':
+    get:
+      description: Returns the current temperature and climate control state.
+      tags:
+        - Vehicles
+      operationId: Get Climate State
+      produces:
+        - application/json
+      parameters:
+        - $ref: "#/parameters/authorization_header"
+        - $ref: "#/parameters/vehicle_id"
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/ClimateStateResponse'
+      x-unitTests: []
+      x-operation-settings:
+        CollectParameters: false
+        AllowDynamicQueryParameters: false
+        AllowDynamicFormParameters: false
+        IsMultiContentStreaming: false
+  '/api/1/vehicles/{vehicle_id}/data_request/drive_state':
+    get:
+      description: Returns the driving and position state of the vehicle.
+      tags:
+        - Vehicles
+      operationId: Get Drive State
+      produces:
+        - application/json
+      parameters:
+        - $ref: "#/parameters/authorization_header"
+        - $ref: "#/parameters/vehicle_id"
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/DriveStateResponse'
+      x-unitTests: []
+      x-operation-settings:
+        CollectParameters: false
+        AllowDynamicQueryParameters: false
+        AllowDynamicFormParameters: false
+        IsMultiContentStreaming: false
+  '/api/1/vehicles/{vehicle_id}/data_request/gui_settings':
+    get:
+      description: >-
+        Returns various information about the GUI settings of the car, such as
+        unit format and range display.
+      tags:
+        - Vehicles
+      operationId: Get Gui Settings
+      produces:
+        - application/json
+      parameters:
+        - $ref: "#/parameters/authorization_header"
+        - $ref: "#/parameters/vehicle_id"
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/GuiSettingsResponse'
+      x-unitTests:
+        - request:
+            method: GET
+            uri: /api/1/vehicles/1/data_request/gui_settings
+          expectedResponse:
+            x-allowExtraHeaders: true
+            x-bodyMatchMode: KEYS
+            x-arrayOrderedMatching: false
+            x-arrayCheckCount: false
+            x-matchResponseSchema: true
+            headers:
+              Content-Type: application/json
+            body: >-
+              {  "response": {    "gui_distance_units": "mi/hr",
+              "gui_temperature_units": "F",    "gui_charge_rate_units":
+              "mi/hr",    "gui_24_hour_time": false,    "gui_range_display":
+              "Rated"  }}
+          x-testShouldPass: true
+          x-testEnabled: true
+          x-testName: GUI Settings1
+          x-testDescription: >-
+            Returns various information about the GUI settings of the car, such
+            as unit format and range display.
+      x-operation-settings:
+        CollectParameters: false
+        AllowDynamicQueryParameters: false
+        AllowDynamicFormParameters: false
+        IsMultiContentStreaming: false
+  '/api/1/vehicles/{vehicle_id}/data_request/vehicle_state':
+    get:
+      description: 'Returns the vehicle''s physical state, such as which doors are open.'
+      tags:
+        - Vehicles
+      operationId: Get Vehicle State
+      produces:
+        - application/json
+      parameters:
+        - $ref: "#/parameters/authorization_header"
+        - $ref: "#/parameters/vehicle_id"
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/VehicleStateResponse'
+      x-unitTests: []
+      x-operation-settings:
+        CollectParameters: false
+        AllowDynamicQueryParameters: false
+        AllowDynamicFormParameters: false
+        IsMultiContentStreaming: false
+definitions:
+  GetAnAccessTokenResponse:
+    title: Get an Access Token Response
+    type: object
+    properties:
+      access_token:
+        type: string
+      token_type:
+        type: string
+      expires_in:
+        type: integer
+        format: int32
+      created_at:
+        type: integer
+        format: int32
+      refresh_token:
+        type: string
+    required:
+      - access_token
+      - token_type
+      - expires_in
+      - created_at
+      - refresh_token
+  ListAllVehiclesResponse:
+    title: List all Vehicles Response
+    type: object
+    properties:
+      response:
+        type: array
+        items:
+          properties:
+            id:
+              type: integer
+              format: int64
+            vehicle_id:
+              type: integer
+              format: int64
+            vin:
+              type: string
+            display_name:
+              type: string
+            option_codes:
+              type: string
+            color:
+              type: string
+# No idea what these could be for
+# TODO map them properly
+#            tokens:
+#              type: array
+            state:
+              type: string
+            in_service:
+              type: string
+            id_s:
+              type: string
+            remote_start_enabled:
+              type: boolean
+            calendar_enabled:
+              type: boolean
+            notifications_enabled:
+              type: boolean
+            backseat_token:
+              type: string
+            backseat_token_updated_at:
+              type: integer
+              format: int64
+      count:
+        type: integer
+        format: int32
+    required:
+      - response
+      - count
+  MobileAccessResponse:
+    title: Mobile Access Response
+    type: object
+    properties:
+      response:
+        type: boolean
+    required:
+      - response
+  ChargeStateResponse:
+    title: Charge State Response
+    type: object
+    properties:
+      response:
+        type: object
+        properties:
+          charging_state:
+            type: string
+            description: "Charging", "Disconnected", ??
+          charge_limit_soc:
+            type: integer
+          charge_limit_soc_std:
+            type: integer
+          charge_limit_soc_min:
+            type: integer
+          charge_limit_soc_max:
+            type: integer
+          charge_to_max_range:
+            type: boolean
+            description: current std/max-range setting
+          battery_heater_on:
+            type: boolean
+          not_enough_power_to_heat:
+            type: boolean
+          max_range_charge_counter:
+            type: integer
+          fast_charger_present:
+            type: boolean
+            description: connected to Supercharger?
+          fast_charger_type:
+            type: string
+          battery_range:
+            type: number
+            description: rated miles
+          est_battery_range:
+            type: number
+            description: range estimated from recent driving
+          ideal_battery_range:
+            type: number
+            description: ideal miles
+          battery_level:
+            type: integer
+            description: charge percentage
+          battery_current:
+            type: number
+            description: current flowing into battery
+          usable_battery_level:
+            type: integer
+          charge_energy_added:
+            type: number
+          charge_miles_added_rated:
+            type: number
+          charge_miles_added_ideal:
+            type: number
+          charger_voltage:
+            type: integer
+            description: only has value while charging
+          charger_pilot_current:
+            type: integer
+            description: max current allowed by charger & adapter
+          charger_actual_current:
+            type: integer
+            description: current actually being drawn
+          charger_power:
+            type: integer
+            description: kW (rounded down) of charger
+          time_to_full_charge:
+            type: number
+            description: valid only while charging
+          trip_charging:
+            type: boolean
+          charge_rate:
+            type: number
+            description: miles/hr charging or -1 if not charging
+          charge_port_door_open:
+            type: boolean
+          motorized_charge_port:
+            type: boolean
+          scheduled_charging_start_time:
+            type: integer
+            format: int64
+            description: seconds since the epoc
+          scheduled_charging_pending:
+            type: boolean
+          user_charge_enable_request:
+            type: string
+          charge_enable_request:
+            type: boolean
+          eu_vehicle:
+            type: boolean
+          charger_phases:
+            type: integer
+          charge_port_latch:
+            type: string
+          charge_current_request:
+            type: integer
+          charge_current_request_max:
+            type: integer
+          managed_charging_active:
+            type: boolean
+          managed_charging_user_canceled:
+            type: boolean
+          managed_charging_start_time:
+            type: integer
+            format: int64
+            description: seconds since the epoc
+    required:
+      - response
+  ClimateStateResponse:
+    title: Climate Settings Response
+    type: object
+    properties:
+      response:
+        type: object
+        properties:
+          inside_temp:
+            type: number
+            description: degC inside car
+          outside_temp:
+            type: number
+            description: degC outside car or null
+          driver_temp_setting:
+            type: number
+            description: degC of driver temperature setpoint
+          passenger_temp_setting:
+            type: number
+            description: degC of passenger temperature setpoint
+          left_temp_direction:
+            type: integer
+          right_temp_direction:
+            type: integer
+          is_auto_conditioning_on:
+            type: string
+          is_front_defroster_on:
+            type: string
+          is_rear_defroster_on:
+            type: string
+          fan_status:
+            type: string
+            description: fan speed 0-6 or null
+          is_climate_on:
+            type: boolean
+          min_avail_temp:
+            type: number
+          max_avail_temp:
+            type: number
+          seat_heater_left:
+            type: integer
+          seat_heater_right:
+            type: integer
+          seat_heater_rear_left:
+            type: integer
+          seat_heater_rear_right:
+            type: integer
+          seat_heater_rear_center:
+            type: integer
+          seat_heater_rear_right_back:
+            type: integer
+          seat_heater_rear_left_back:
+            type: integer
+          smart_preconditioning:
+            type: boolean
+    required:
+      - response
+  DriveStateResponse:
+    title: Drive State Response
+    type: object
+    properties:
+      response:
+        type: object
+        properties:
+          shift_state:
+            type: string
+          speed:
+            type: number
+          latitude:
+            type: number
+            description: degrees North of the equator (negative = South)
+          longitude:
+            type: number
+            description: degrees East of the prime meridian (negative = West)
+          heading:
+            type: integer
+            description: integer compass heading, 0-359
+          gps_as_of:
+            type: integer
+            description: time of this GPS reading - seconds since the epoc
+    required:
+      - response
+  GuiSettingsResponse:
+    title: Gui Settings Response
+    type: object
+    properties:
+      response:
+        type: object
+        properties:
+          gui_distance_units:
+            type: string
+            description: "km/hr", "mi/hr"
+          gui_temperature_units:
+            type: string
+            description: "C", "F"
+          gui_charge_rate_units:
+            type: string
+            description: "km/hr", "mi/hr"
+          gui_24_hour_time:
+            type: boolean
+          gui_range_display:
+            type: string
+            description: "Rated", "Ideal"
+    required:
+      - response
+  VehicleStateResponse:
+    title: Vehicle State Response
+    type: object
+    properties:
+      response:
+        type: object
+        properties:
+          api_version:
+            type: integer
+          autopark_state:
+            type: string
+          autopark_state_v2:
+            type: string
+          autopark_style:
+            type: string
+          calendar_supported:
+            type: boolean
+          car_type:
+            type: string
+          car_version:
+            type: string
+            description: car firmware version
+          center_display_state:
+            type: integer
+          dark_rims:
+            type: boolean
+          df:
+            type: boolean
+            description: driver's side front door open
+          dr:
+            type: boolean
+            description: driver's side rear door open
+          exterior_color:
+            type: string
+          ft:
+            type: boolean
+            description: front trunk is open
+          has_spoiler:
+            type: boolean
+          homelink_nearby:
+            type: boolean
+          last_autopark_error:
+            type: string
+          locked:
+            type: boolean
+          notifications_supported:
+            type: boolean
+          odometer:
+            type: number
+          parsed_calendar_supported:
+            type: boolean
+          perf_config:
+            type: string
+            description: "P1", "Base", ...
+          pf:
+            type: integer
+            description: passenger's side front door open
+          pr:
+            type: integer
+            description: passenger's side rear door open
+          rear_seat_heaters:
+            type: integer
+          rear_seat_type:
+            type: integer
+          remote_start:
+            type: boolean
+          remote_start_supported:
+            type: boolean
+          rhd:
+            type: boolean
+          roof_color:
+            type: string
+          rt:
+            type: integer
+            description: rear trunk is open
+          seat_type:
+            type: integer
+          spoiler_type:
+            type: string
+          sun_roof_installed:
+            type: integer
+          sun_roof_percent_open:
+            type: integer
+          sun_roof_state:
+            type: string
+          third_row_seats:
+            type: string
+          valet_mode:
+            type: boolean
+          valet_pin_needed:
+            type: boolean
+          vehicle_name:
+            type: string
+          wheel_type:
+            type: string
+    required:
+      - response
+
+# define reusable parameters:
+parameters:
+  vehicle_id:
+    name: vehicle_id
+    in: path
+    required: true
+    type: integer
+    format: int64
+    description: The id of the Vehicle.
+
+  authorization_header:
+    name: authorization
+    in: header
+    type: string
+    required: true
+    description: "Bearer {access_token}"
