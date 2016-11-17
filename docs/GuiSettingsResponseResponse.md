@@ -4,11 +4,11 @@
 ## Properties
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**guiDistanceUnits** | **String** |  |  [optional]
-**guiTemperatureUnits** | **String** |  |  [optional]
-**guiChargeRateUnits** | **String** |  |  [optional]
+**guiDistanceUnits** | **String** | \&quot;km/hr\&quot;, \&quot;mi/hr\&quot; |  [optional]
+**guiTemperatureUnits** | **String** | \&quot;C\&quot;, \&quot;F\&quot; |  [optional]
+**guiChargeRateUnits** | **String** | \&quot;km/hr\&quot;, \&quot;mi/hr\&quot; |  [optional]
 **gui24HourTime** | **Boolean** |  |  [optional]
-**guiRangeDisplay** | **String** |  |  [optional]
+**guiRangeDisplay** | **String** | \&quot;Rated\&quot;, \&quot;Ideal\&quot;, ... |  [optional]
 
 
 

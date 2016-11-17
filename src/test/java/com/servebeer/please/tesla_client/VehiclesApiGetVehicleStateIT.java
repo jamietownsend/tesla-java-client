@@ -9,16 +9,14 @@ import com.servebeer.please.tesla_client.generated.model.*;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.util.List;
-
 import static junit.framework.TestCase.assertTrue;
 
 /**
  * API tests for VehiclesApi
  */
-public class VehiclesApiIT {
+public class VehiclesApiGetVehicleStateIT {
 
-    public static long testId = 0;
+    private static long testId = 0;
 
     private static final VehiclesApi vehiclesApi = new VehiclesApi();
     private static String authorization = "";
@@ -30,9 +28,9 @@ public class VehiclesApiIT {
      * @throws ApiException
      *          if the Api call fails
      */
-    public static long getFirstId() throws ApiException {
+    private static long getVehicleId(final int vehicleNumber) throws ApiException {
         ListAllVehiclesResponse listAllVehiclesResponse = vehiclesApi.listAllVehicles(authorization);
-        return listAllVehiclesResponse.getResponse().get(0).getId();
+        return listAllVehiclesResponse.getResponse().get(vehicleNumber).getId();
 
     }
 
@@ -44,7 +42,7 @@ public class VehiclesApiIT {
 
         authorization = ConnectionManager.getAuthorization(TestDefaults.TEST_USER_EMAIL_ADDRESS, TestDefaults.TEST_USER_PASSWORD);
         vehiclesApi.setApiClient(vehiclesApi.getApiClient().setDebugging(TestDefaults.DEBUGGING_ENABLED));
-        VehiclesApiIT.testId = getFirstId();
+        VehiclesApiGetVehicleStateIT.testId = getVehicleId(TestDefaults.TEST_VEHICLE_NUMBER);
     }
 
     /**

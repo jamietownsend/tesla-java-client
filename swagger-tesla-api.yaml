@@ -326,6 +326,431 @@ paths:
         AllowDynamicQueryParameters: false
         AllowDynamicFormParameters: false
         IsMultiContentStreaming: false
+
+# These commands alter the vehicles state, and return result (true/false) to indicate success, and if failure reason contains the cause of failure.
+  '/api/1/vehicles/{vehicle_id}/command/wake_up':
+    post:
+      description: 'Wakes up the car from the sleep state. Necessary to get some data from the car.'
+      tags:
+        - Vehicles
+      operationId: Wake Vehicle
+      produces:
+        - application/json
+      parameters:
+        - $ref: "#/parameters/authorization_header"
+        - $ref: "#/parameters/vehicle_id"
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/AlterVehicleStateResponse'
+      x-unitTests: []
+      x-operation-settings:
+        CollectParameters: false
+        AllowDynamicQueryParameters: false
+        AllowDynamicFormParameters: false
+        IsMultiContentStreaming: false
+  '/api/1/vehicles/{vehicle_id}/command/set_valet_mode':
+    post:
+      description: >-
+        Sets valet mode on or off with a PIN to disable it from within the car. Reuses last PIN from previous valet session.
+        Valet Mode limits the car's top speed to 70MPH and 80kW of acceleration power. It also disables Homelink, Bluetooth and
+        Wifi settings, and the ability to disable mobile access to the car. It also hides your favorites, home, and work
+        locations in navigation.
+      tags:
+        - Vehicles
+      operationId: Set Valet Mode
+      produces:
+        - application/json
+      parameters:
+        - $ref: "#/parameters/authorization_header"
+        - $ref: "#/parameters/vehicle_id"
+        - name: enabled
+          in: query
+          type: boolean
+          description: Whether to enable or disable valet mode.
+        - name: password
+          in: query
+          type: integer
+          description: A 4 digit PIN code to unlock the car - required if on = true
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/AlterVehicleStateResponse'
+      x-unitTests: []
+      x-operation-settings:
+        CollectParameters: false
+        AllowDynamicQueryParameters: false
+        AllowDynamicFormParameters: false
+        IsMultiContentStreaming: false
+  '/api/1/vehicles/{vehicle_id}/command/reset_valet_pin':
+    post:
+      description: Resets the PIN set for valet mode, if set.
+      tags:
+        - Vehicles
+      operationId: Reset Valet Mode
+      produces:
+        - application/json
+      parameters:
+        - $ref: "#/parameters/authorization_header"
+        - $ref: "#/parameters/vehicle_id"
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/AlterVehicleStateResponse'
+      x-unitTests: []
+      x-operation-settings:
+        CollectParameters: false
+        AllowDynamicQueryParameters: false
+        AllowDynamicFormParameters: false
+        IsMultiContentStreaming: false
+  '/api/1/vehicles/{vehicle_id}/command/charge_port_door_open':
+    post:
+      description: Opens the charge port. Does not close the charge port
+      tags:
+        - Vehicles
+      operationId: Open Charge Port Door
+      produces:
+        - application/json
+      parameters:
+        - $ref: "#/parameters/authorization_header"
+        - $ref: "#/parameters/vehicle_id"
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/AlterVehicleStateResponse'
+      x-unitTests: []
+      x-operation-settings:
+        CollectParameters: false
+        AllowDynamicQueryParameters: false
+        AllowDynamicFormParameters: false
+        IsMultiContentStreaming: false
+  '/api/1/vehicles/{vehicle_id}/command/charge_max_range':
+    post:
+      description: Set the charge mode to max range (100% under the new percentage system introduced in 4.5). Use sparingly!
+      tags:
+        - Vehicles
+      operationId: Set Charge Max Range
+      produces:
+        - application/json
+      parameters:
+        - $ref: "#/parameters/authorization_header"
+        - $ref: "#/parameters/vehicle_id"
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/AlterVehicleStateResponse'
+      x-unitTests: []
+      x-operation-settings:
+        CollectParameters: false
+        AllowDynamicQueryParameters: false
+        AllowDynamicFormParameters: false
+        IsMultiContentStreaming: false
+  '/api/1/vehicles/{vehicle_id}/command/set_charge_limit':
+    post:
+      description: Set the charge limit to a custom percentage.
+      tags:
+        - Vehicles
+      operationId: Set Charge Limit
+      produces:
+        - application/json
+      parameters:
+        - $ref: "#/parameters/authorization_header"
+        - $ref: "#/parameters/vehicle_id"
+        - name: percent
+          in: query
+          required: true
+          type: integer
+
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/AlterVehicleStateResponse'
+      x-unitTests: []
+      x-operation-settings:
+        CollectParameters: false
+        AllowDynamicQueryParameters: false
+        AllowDynamicFormParameters: false
+        IsMultiContentStreaming: false
+  '/api/1/vehicles/{vehicle_id}/command/charge_start':
+    post:
+      description: 'Start charging. Must be plugged in, have power available, and not have reached your charge limit.'
+      tags:
+        - Vehicles
+      operationId: Start Charging
+      produces:
+        - application/json
+      parameters:
+        - $ref: "#/parameters/authorization_header"
+        - $ref: "#/parameters/vehicle_id"
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/AlterVehicleStateResponse'
+      x-unitTests: []
+      x-operation-settings:
+        CollectParameters: false
+        AllowDynamicQueryParameters: false
+        AllowDynamicFormParameters: false
+        IsMultiContentStreaming: false
+  '/api/1/vehicles/{vehicle_id}/command/charge_stop':
+    post:
+      description: 'Stop charging. Must already be charging.'
+      tags:
+        - Vehicles
+      operationId: Stop Charging
+      produces:
+        - application/json
+      parameters:
+        - $ref: "#/parameters/authorization_header"
+        - $ref: "#/parameters/vehicle_id"
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/AlterVehicleStateResponse'
+      x-unitTests: []
+      x-operation-settings:
+        CollectParameters: false
+        AllowDynamicQueryParameters: false
+        AllowDynamicFormParameters: false
+        IsMultiContentStreaming: false
+  '/api/1/vehicles/{vehicle_id}/command/flash_lights':
+    post:
+      description: 'Flash the lights once.'
+      tags:
+        - Vehicles
+      operationId: Flash Lights
+      produces:
+        - application/json
+      parameters:
+        - $ref: "#/parameters/authorization_header"
+        - $ref: "#/parameters/vehicle_id"
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/AlterVehicleStateResponse'
+      x-unitTests: []
+      x-operation-settings:
+        CollectParameters: false
+        AllowDynamicQueryParameters: false
+        AllowDynamicFormParameters: false
+        IsMultiContentStreaming: false
+  '/api/1/vehicles/{vehicle_id}/command/honk_horn':
+    post:
+      description: 'Honk the horn once.'
+      tags:
+        - Vehicles
+      operationId: Honk Horn
+      produces:
+        - application/json
+      parameters:
+        - $ref: "#/parameters/authorization_header"
+        - $ref: "#/parameters/vehicle_id"
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/AlterVehicleStateResponse'
+      x-unitTests: []
+      x-operation-settings:
+        CollectParameters: false
+        AllowDynamicQueryParameters: false
+        AllowDynamicFormParameters: false
+        IsMultiContentStreaming: false
+  '/api/1/vehicles/{vehicle_id}/command/door_unlock':
+    post:
+      description: 'Unlock the car''s doors. (All of them??)'
+      tags:
+        - Vehicles
+      operationId: Unlock Doors
+      produces:
+        - application/json
+      parameters:
+        - $ref: "#/parameters/authorization_header"
+        - $ref: "#/parameters/vehicle_id"
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/AlterVehicleStateResponse'
+      x-unitTests: []
+      x-operation-settings:
+        CollectParameters: false
+        AllowDynamicQueryParameters: false
+        AllowDynamicFormParameters: false
+        IsMultiContentStreaming: false
+  '/api/1/vehicles/{vehicle_id}/command/door_lock':
+    post:
+      description: 'Lock the car''s doors.'
+      tags:
+        - Vehicles
+      operationId: Lock Doors
+      produces:
+        - application/json
+      parameters:
+        - $ref: "#/parameters/authorization_header"
+        - $ref: "#/parameters/vehicle_id"
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/AlterVehicleStateResponse'
+      x-unitTests: []
+      x-operation-settings:
+        CollectParameters: false
+        AllowDynamicQueryParameters: false
+        AllowDynamicFormParameters: false
+        IsMultiContentStreaming: false
+  '/api/1/vehicles/{vehicle_id}/command/auto_conditioning_start':
+    post:
+      description: Start the climate control system. Will cool or heat automatically, depending on set temperature.
+      tags:
+        - Vehicles
+      operationId: Start Temperature Regulation
+      produces:
+        - application/json
+      parameters:
+        - $ref: "#/parameters/authorization_header"
+        - $ref: "#/parameters/vehicle_id"
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/AlterVehicleStateResponse'
+      x-unitTests: []
+      x-operation-settings:
+        CollectParameters: false
+        AllowDynamicQueryParameters: false
+        AllowDynamicFormParameters: false
+        IsMultiContentStreaming: false
+  '/api/1/vehicles/{vehicle_id}/command/auto_conditioning_stop':
+    post:
+      description: Stop the climate control system.
+      tags:
+        - Vehicles
+      operationId: Stop Temperature Regulation
+      produces:
+        - application/json
+      parameters:
+        - $ref: "#/parameters/authorization_header"
+        - $ref: "#/parameters/vehicle_id"
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/AlterVehicleStateResponse'
+      x-unitTests: []
+      x-operation-settings:
+        CollectParameters: false
+        AllowDynamicQueryParameters: false
+        AllowDynamicFormParameters: false
+        IsMultiContentStreaming: false
+  '/api/1/vehicles/{vehicle_id}/command/sun_roof_control':
+    post:
+      description: Controls the car's panoramic roof, if installed.
+      tags:
+        - Vehicles
+      operationId: Control Sun Roof
+      produces:
+        - application/json
+      parameters:
+        - $ref: "#/parameters/authorization_header"
+        - $ref: "#/parameters/vehicle_id"
+        - name: state
+          in: query
+          type: string
+#`open` (enum[string])
+#        The desired state of the panoramic roof. The approximate percent open values for each state are `open` = 100%, `close` = 0%, `comfort` = 80%, and `vent` = ~15%
+#        + Members
+#            + `open` - Open the roof fully
+#            + `close` - Close the roof completely
+#            + `comfort` - Open to the comfort (80%) setting
+#            + `vent` - Open the roof to the vent (~15%) setting
+#            + `move` - Indicates you will provide a percentage to move the roof.
+#    + percent: `50` (number, optional) - The percentage to move the roof to.
+        - name: percent
+          in: query
+          type: integer
+          description: The percentage to move the roof to.
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/AlterVehicleStateResponse'
+      responses:
+        '400':
+          description: ''
+          schema:
+            $ref: '#/definitions/AlterVehicleStateResponse400'
+      x-unitTests: []
+      x-operation-settings:
+        CollectParameters: false
+        AllowDynamicQueryParameters: false
+        AllowDynamicFormParameters: false
+        IsMultiContentStreaming: false
+  '/api/1/vehicles/{vehicle_id}/command/remote_start_drive':
+    post:
+      description: Start the car for keyless driving. Must start driving within 2 minutes of issuing this request.
+      tags:
+        - Vehicles
+      operationId: Enable Remote Driving
+      produces:
+        - application/json
+      parameters:
+        - $ref: "#/parameters/authorization_header"
+        - $ref: "#/parameters/vehicle_id"
+        - name: password
+          in: query
+          type: string
+          description: The password to the authenticated my.teslamotors.com account.
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/AlterVehicleStateResponse'
+      x-unitTests: []
+      x-operation-settings:
+        CollectParameters: false
+        AllowDynamicQueryParameters: false
+        AllowDynamicFormParameters: false
+        IsMultiContentStreaming: false
+
+  '/api/1/vehicles/{vehicle_id}/command/trunk_open':
+    post:
+      description: Open the trunk or frunk.
+      tags:
+        - Vehicles
+      operationId: Open Trunk
+      produces:
+        - application/json
+      parameters:
+        - $ref: "#/parameters/authorization_header"
+        - $ref: "#/parameters/vehicle_id"
+        - name: which_trunk
+          in: query
+          type: string
+          description: The trunk to open. `rear` is the only one known currently.
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/AlterVehicleStateResponse'
+      x-unitTests: []
+      x-operation-settings:
+        CollectParameters: false
+        AllowDynamicQueryParameters: false
+        AllowDynamicFormParameters: false
+        IsMultiContentStreaming: false
+
+
 definitions:
   GetAnAccessTokenResponse:
     title: Get an Access Token Response
@@ -716,6 +1141,30 @@ definitions:
             type: string
     required:
       - response
+
+  AlterVehicleStateResponse:
+    title: Vehicle State Response
+    type: object
+    description: The response from any POST request to alter the vehicle state.
+    properties:
+      response:
+        type: object
+        properties:
+          result:
+            type: boolean
+          reason:
+            type: string
+  AlterVehicleStateResponse400:
+    title: Vehicle State Response 400
+    type: object
+    description: A response from any POST request to alter the vehicle state with an HTTP error code 400
+    properties:
+      response:
+        type: string
+      error:
+        type: string
+      error_description:
+        type: string
 
 # define reusable parameters:
 parameters:
