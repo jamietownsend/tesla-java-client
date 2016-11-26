@@ -109,6 +109,7 @@ paths:
         AllowDynamicQueryParameters: false
         AllowDynamicFormParameters: false
         IsMultiContentStreaming: false
+
   /api/1/vehicles:
     get:
       description: Retrieve a list of your owned vehicles (includes vehicles not yet shipped!)
@@ -154,9 +155,63 @@ paths:
         AllowDynamicQueryParameters: false
         AllowDynamicFormParameters: false
         IsMultiContentStreaming: false
+
+  '/api/1/vehicles/{vehicle_id}':
+    get:
+      description: >-
+        Retrieve the State and Settings of the given vehicle
+
+        Expected Response - {"response":{"api_version":3,"autopark_state":"unavailable","autopark_state_v2":"ready","autopark_style":"dead_man","calendar_supported":true,"car_type":"x","car_version":"2.44.121","center_display_state":0,"dark_rims":false,"df":0,"dr":0,"exterior_color":"SignatureBlue","ft":0,"has_spoiler":true,"homelink_nearby":true,"last_autopark_error":"no_error","locked":true,"notifications_supported":true,"odometer":1607.101711,"parsed_calendar_supported":true,"perf_config":"P1","pf":0,"pr":0,"rear_seat_heaters":0,"rear_seat_type":0,"remote_start":false,"remote_start_supported":true,"rhd":false,"roof_color":"None","rt":0,"seat_type":0,"spoiler_type":"Passive","sun_roof_installed":0,"sun_roof_percent_open":null,"sun_roof_state":"unknown","third_row_seats":"FuturisFoldFlat","valet_mode":false,"valet_pin_needed":true,"vehicle_name":"","wheel_type":"AeroTurbine20"}}
+      tags:
+        - Vehicles
+      operationId: Get Vehicle State And Settings
+      produces:
+        - application/json
+      parameters:
+        - $ref: "#/parameters/authorization_header"
+        - $ref: "#/parameters/vehicle_id"
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/GetVehicleStateAndSettingsResponse'
+      x-unitTests:
+        - request:
+            method: GET
+            uri: /api/1/vehicles
+          expectedResponse:
+            x-allowExtraHeaders: true
+            x-bodyMatchMode: KEYS
+            x-arrayOrderedMatching: false
+            x-arrayCheckCount: false
+            x-matchResponseSchema: true
+            headers:
+              Content-Type: application/json
+            body: >-
+              {  "response": [{    "color": null,    "display_name": null,
+              "id": 321,    "option_codes":
+              "MS01,RENA,TM00,DRLH,PF00,BT85,PBCW,RFPO,WT19,IBMB,IDPB,TR00,SU01,SC01,TP01,AU01,CH00,HP00,PA00,PS00,AD02,X020,X025,X001,X003,X007,X011,X013",
+              "user_id": 123,    "vehicle_id": 1234567890,    "vin":
+              "5YJSA1CN5CFP01657",    "tokens": ["x", "x"],    "state":
+              "online"  }],  "count":1}
+          x-testShouldPass: true
+          x-testEnabled: true
+          x-testName: List all Vehicles1
+          x-testDescription: >-
+            Retrieve a list of your owned vehicles (includes vehicles not yet
+            shipped!)
+      x-operation-settings:
+        CollectParameters: false
+        AllowDynamicQueryParameters: false
+        AllowDynamicFormParameters: false
+        IsMultiContentStreaming: false
+
   '/api/1/vehicles/{vehicle_id}/mobile_enabled':
     get:
-      description: Determines if mobile access to the vehicle is enabled.
+      description: >-
+        Determines if mobile access to the vehicle is enabled.
+
+        Expected response - {"response":true}
       tags:
         - Vehicles
       operationId: Is Mobile Enabled
@@ -169,7 +224,7 @@ paths:
         '200':
           description: ''
           schema:
-            $ref: '#/definitions/MobileAccessResponse'
+            $ref: '#/definitions/IsMobileEnabledResponse'
       x-unitTests:
         - request:
             method: GET
@@ -192,9 +247,13 @@ paths:
         AllowDynamicQueryParameters: false
         AllowDynamicFormParameters: false
         IsMultiContentStreaming: false
+
   '/api/1/vehicles/{vehicle_id}/data_request/charge_state':
     get:
-      description: Returns the state of charge in the battery.
+      description: >-
+        Returns the state of charge in the battery.
+
+        Example response - {"response":{"charging_state":"Disconnected","charge_limit_soc":80,"charge_limit_soc_std":90,"charge_limit_soc_min":50,"charge_limit_soc_max":100,"charge_to_max_range":false,"battery_heater_on":false,"not_enough_power_to_heat":false,"max_range_charge_counter":0,"fast_charger_present":false,"fast_charger_type":"<invalid>","battery_range":96.43,"est_battery_range":61.87,"ideal_battery_range":76.96,"battery_level":32,"usable_battery_level":31,"battery_current":-0.6,"charge_energy_added":8.17,"charge_miles_added_rated":30.0,"charge_miles_added_ideal":24.0,"charger_voltage":0,"charger_pilot_current":0,"charger_actual_current":0,"charger_power":0,"time_to_full_charge":0.0,"trip_charging":false,"charge_rate":0.0,"charge_port_door_open":false,"motorized_charge_port":true,"scheduled_charging_start_time":null,"scheduled_charging_pending":false,"user_charge_enable_request":null,"charge_enable_request":true,"eu_vehicle":true,"charger_phases":null,"charge_port_latch":"Blocking","charge_current_request":24,"charge_current_request_max":24,"managed_charging_active":false,"managed_charging_user_canceled":false,"managed_charging_start_time":null}}
       tags:
         - Vehicles
       operationId: Get Charge State
@@ -214,9 +273,13 @@ paths:
         AllowDynamicQueryParameters: false
         AllowDynamicFormParameters: false
         IsMultiContentStreaming: false
+
   '/api/1/vehicles/{vehicle_id}/data_request/climate_state':
     get:
-      description: Returns the current temperature and climate control state.
+      description: >-
+        Returns the current temperature and climate control state.
+
+        Example response - {"response":{"inside_temp":7.8,"outside_temp":5.5,"driver_temp_setting":21.0,"passenger_temp_setting":20.0,"left_temp_direction":393,"right_temp_direction":281,"is_auto_conditioning_on":false,"is_front_defroster_on":3,"is_rear_defroster_on":false,"fan_status":0,"is_climate_on":false,"min_avail_temp":15.0,"max_avail_temp":28.0,"seat_heater_left":0,"seat_heater_right":0,"seat_heater_rear_left":0,"seat_heater_rear_right":0,"seat_heater_rear_center":0,"seat_heater_rear_right_back":0,"seat_heater_rear_left_back":0,"smart_preconditioning":false}}
       tags:
         - Vehicles
       operationId: Get Climate State
@@ -236,9 +299,13 @@ paths:
         AllowDynamicQueryParameters: false
         AllowDynamicFormParameters: false
         IsMultiContentStreaming: false
+
   '/api/1/vehicles/{vehicle_id}/data_request/drive_state':
     get:
-      description: Returns the driving and position state of the vehicle.
+      description: >-
+        Returns the driving and position state of the vehicle.
+
+        Example response - {"response":{"shift_state":null,"speed":null,"latitude":46.745719,"longitude":7.647721,"heading":247,"gps_as_of":1480148100}}
       tags:
         - Vehicles
       operationId: Get Drive State
@@ -258,11 +325,14 @@ paths:
         AllowDynamicQueryParameters: false
         AllowDynamicFormParameters: false
         IsMultiContentStreaming: false
+
   '/api/1/vehicles/{vehicle_id}/data_request/gui_settings':
     get:
       description: >-
         Returns various information about the GUI settings of the car, such as
         unit format and range display.
+
+        Example response - {"response":{"gui_distance_units":"km/hr","gui_temperature_units":"C","gui_charge_rate_units":"km/hr","gui_24_hour_time":true,"gui_range_display":"Ideal"}}
       tags:
         - Vehicles
       operationId: Get Gui Settings
@@ -304,9 +374,13 @@ paths:
         AllowDynamicQueryParameters: false
         AllowDynamicFormParameters: false
         IsMultiContentStreaming: false
+
   '/api/1/vehicles/{vehicle_id}/data_request/vehicle_state':
     get:
-      description: 'Returns the vehicle''s physical state, such as which doors are open.'
+      description: >-
+        Returns the vehicle's physical state, such as which doors are open.
+
+        Example response - {"response":{"api_version":3,"autopark_state":"unavailable","autopark_state_v2":"ready","autopark_style":"dead_man","calendar_supported":true,"car_type":"x","car_version":"2.44.121","center_display_state":0,"dark_rims":false,"df":0,"dr":0,"exterior_color":"SignatureBlue","ft":0,"has_spoiler":true,"homelink_nearby":true,"last_autopark_error":"no_error","locked":true,"notifications_supported":true,"odometer":1607.101711,"parsed_calendar_supported":true,"perf_config":"P1","pf":0,"pr":0,"rear_seat_heaters":0,"rear_seat_type":0,"remote_start":false,"remote_start_supported":true,"rhd":false,"roof_color":"None","rt":0,"seat_type":0,"spoiler_type":"Passive","sun_roof_installed":0,"sun_roof_percent_open":null,"sun_roof_state":"unknown","third_row_seats":"FuturisFoldFlat","valet_mode":false,"valet_pin_needed":true,"vehicle_name":"","wheel_type":"AeroTurbine20"}}
       tags:
         - Vehicles
       operationId: Get Vehicle State
@@ -330,7 +404,7 @@ paths:
 # These commands alter the vehicles state, and return result (true/false) to indicate success, and if failure reason contains the cause of failure.
   '/api/1/vehicles/{vehicle_id}/command/wake_up':
     post:
-      description: 'Wakes up the car from the sleep state. Necessary to get some data from the car.'
+      description: Wakes up the car from the sleep state. Necessary to get some data from the car.
       tags:
         - Vehicles
       operationId: Wake Vehicle
@@ -350,6 +424,7 @@ paths:
         AllowDynamicQueryParameters: false
         AllowDynamicFormParameters: false
         IsMultiContentStreaming: false
+
   '/api/1/vehicles/{vehicle_id}/command/set_valet_mode':
     post:
       description: >-
@@ -384,6 +459,7 @@ paths:
         AllowDynamicQueryParameters: false
         AllowDynamicFormParameters: false
         IsMultiContentStreaming: false
+
   '/api/1/vehicles/{vehicle_id}/command/reset_valet_pin':
     post:
       description: Resets the PIN set for valet mode, if set.
@@ -406,6 +482,7 @@ paths:
         AllowDynamicQueryParameters: false
         AllowDynamicFormParameters: false
         IsMultiContentStreaming: false
+
   '/api/1/vehicles/{vehicle_id}/command/charge_port_door_open':
     post:
       description: Opens the charge port. Does not close the charge port
@@ -428,6 +505,7 @@ paths:
         AllowDynamicQueryParameters: false
         AllowDynamicFormParameters: false
         IsMultiContentStreaming: false
+
   '/api/1/vehicles/{vehicle_id}/command/charge_max_range':
     post:
       description: Set the charge mode to max range (100% under the new percentage system introduced in 4.5). Use sparingly!
@@ -450,6 +528,7 @@ paths:
         AllowDynamicQueryParameters: false
         AllowDynamicFormParameters: false
         IsMultiContentStreaming: false
+
   '/api/1/vehicles/{vehicle_id}/command/set_charge_limit':
     post:
       description: Set the charge limit to a custom percentage.
@@ -477,6 +556,7 @@ paths:
         AllowDynamicQueryParameters: false
         AllowDynamicFormParameters: false
         IsMultiContentStreaming: false
+
   '/api/1/vehicles/{vehicle_id}/command/charge_start':
     post:
       description: 'Start charging. Must be plugged in, have power available, and not have reached your charge limit.'
@@ -499,6 +579,7 @@ paths:
         AllowDynamicQueryParameters: false
         AllowDynamicFormParameters: false
         IsMultiContentStreaming: false
+
   '/api/1/vehicles/{vehicle_id}/command/charge_stop':
     post:
       description: 'Stop charging. Must already be charging.'
@@ -521,9 +602,13 @@ paths:
         AllowDynamicQueryParameters: false
         AllowDynamicFormParameters: false
         IsMultiContentStreaming: false
+
   '/api/1/vehicles/{vehicle_id}/command/flash_lights':
     post:
-      description: 'Flash the lights once.'
+      description: >-
+        Flash the lights once.
+
+        Example response - {"response":{"reason":"","result":true}}
       tags:
         - Vehicles
       operationId: Flash Lights
@@ -543,6 +628,7 @@ paths:
         AllowDynamicQueryParameters: false
         AllowDynamicFormParameters: false
         IsMultiContentStreaming: false
+
   '/api/1/vehicles/{vehicle_id}/command/honk_horn':
     post:
       description: 'Honk the horn once.'
@@ -565,6 +651,7 @@ paths:
         AllowDynamicQueryParameters: false
         AllowDynamicFormParameters: false
         IsMultiContentStreaming: false
+
   '/api/1/vehicles/{vehicle_id}/command/door_unlock':
     post:
       description: 'Unlock the car''s doors. (All of them??)'
@@ -587,6 +674,7 @@ paths:
         AllowDynamicQueryParameters: false
         AllowDynamicFormParameters: false
         IsMultiContentStreaming: false
+
   '/api/1/vehicles/{vehicle_id}/command/door_lock':
     post:
       description: 'Lock the car''s doors.'
@@ -631,6 +719,7 @@ paths:
         AllowDynamicQueryParameters: false
         AllowDynamicFormParameters: false
         IsMultiContentStreaming: false
+
   '/api/1/vehicles/{vehicle_id}/command/auto_conditioning_stop':
     post:
       description: Stop the climate control system.
@@ -653,6 +742,7 @@ paths:
         AllowDynamicQueryParameters: false
         AllowDynamicFormParameters: false
         IsMultiContentStreaming: false
+
   '/api/1/vehicles/{vehicle_id}/command/sun_roof_control':
     post:
       description: Controls the car's panoramic roof, if installed.
@@ -685,17 +775,18 @@ paths:
           description: ''
           schema:
             $ref: '#/definitions/AlterVehicleStateResponse'
-      responses:
-        '400':
-          description: ''
-          schema:
-            $ref: '#/definitions/AlterVehicleStateResponse400'
+#      responses:
+#        '400':
+#          description: ''
+#          schema:
+#            $ref: '#/definitions/AlterVehicleStateResponse400'
       x-unitTests: []
       x-operation-settings:
         CollectParameters: false
         AllowDynamicQueryParameters: false
         AllowDynamicFormParameters: false
         IsMultiContentStreaming: false
+
   '/api/1/vehicles/{vehicle_id}/command/remote_start_drive':
     post:
       description: Start the car for keyless driving. Must start driving within 2 minutes of issuing this request.
@@ -774,6 +865,7 @@ definitions:
       - expires_in
       - created_at
       - refresh_token
+
   ListAllVehiclesResponse:
     title: List all Vehicles Response
     type: object
@@ -823,14 +915,66 @@ definitions:
     required:
       - response
       - count
-  MobileAccessResponse:
-    title: Mobile Access Response
+
+# This could possibly be merged with ListAllVehiclesResponse, but since we're reverse-engineering someone else's
+# service, it's safe to keep it separate
+  GetVehicleStateAndSettingsResponse:
+    title: Get Vehicle State And Settings Response
+    description: >-
+
+      Expected reponse - {"response":[{"id":45800807942393617,"vehicle_id":1419973848,"vin":"5YJXCCE22GF009859","display_name":"009859","option_codes":"MDLX,REEU,AD15,AF00,AH00,AU00,BC0B,BP00,BS00,BTX4,CC03,CDM0,CF00,CH04,COCH,PPSB,CW00,DA02,DRLH,DSH5,DV4W,FG00,FR01,GLFR,HP00,IDHM,IX00,LP00,LT1B,ME02,MI00,MX01,OSSB,PA00,PF00,PI00,PK00,PS00,QPBT,RFPX,S01B,SC01,SP01,SR01,ST01,SU01,TIM7,TM00,TP00,TR01,TRA1,TW01,UM01,UTPW,WT20,X001,X003,X007,X011,X014,X021,X025,X026,X028,X031,X037,X039,X041,X043,YFCC","color":null,"tokens":["3b90dda45b9f7776","be6bea1a7126e413"],"state":"online","in_service":false,"id_s":"45800807942393617","remote_start_enabled":true,"calendar_enabled":true,"notifications_enabled":true,"backseat_token":null,"backseat_token_updated_at":null}],"count":1}
+    type: object
+    properties:
+      response:
+        type: object
+        properties:
+          id:
+            type: integer
+            format: int64
+          vehicle_id:
+            type: integer
+            format: int64
+          vin:
+            type: string
+          display_name:
+            type: string
+          option_codes:
+            type: string
+          color:
+            type: string
+# No idea what these could be for
+# TODO map them properly
+#          tokens:
+#            type: array
+          state:
+            type: string
+          in_service:
+            type: string
+          id_s:
+            type: string
+          remote_start_enabled:
+            type: boolean
+          calendar_enabled:
+            type: boolean
+          notifications_enabled:
+            type: boolean
+          backseat_token:
+            type: string
+          backseat_token_updated_at:
+            type: integer
+            format: int64
+    required:
+      - response
+
+  IsMobileEnabledResponse:
+    title: Mobile Enabled Response
     type: object
     properties:
       response:
         type: boolean
     required:
       - response
+
   ChargeStateResponse:
     title: Charge State Response
     type: object
@@ -940,6 +1084,7 @@ definitions:
             description: seconds since the epoc
     required:
       - response
+
   ClimateStateResponse:
     title: Climate Settings Response
     type: object
@@ -996,6 +1141,7 @@ definitions:
             type: boolean
     required:
       - response
+
   DriveStateResponse:
     title: Drive State Response
     type: object
@@ -1021,6 +1167,7 @@ definitions:
             description: time of this GPS reading - seconds since the epoc
     required:
       - response
+
   GuiSettingsResponse:
     title: Gui Settings Response
     type: object
@@ -1044,6 +1191,7 @@ definitions:
             description: '"Rated", "Ideal", ...'
     required:
       - response
+
   VehicleStateResponse:
     title: Vehicle State Response
     type: object
@@ -1154,17 +1302,18 @@ definitions:
             type: boolean
           reason:
             type: string
-  AlterVehicleStateResponse400:
-    title: Vehicle State Response 400
-    type: object
-    description: A response from any POST request to alter the vehicle state with an HTTP error code 400
-    properties:
-      response:
-        type: string
-      error:
-        type: string
-      error_description:
-        type: string
+
+#  AlterVehicleStateResponse400:
+#    title: Vehicle State Response 400
+#    type: object
+#    description: A response from any POST request to alter the vehicle state with an HTTP error code 400
+#    properties:
+#      response:
+#        type: string
+#      error:
+#        type: string
+#      error_description:
+#        type: string
 
 # define reusable parameters:
 parameters:

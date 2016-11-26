@@ -48,6 +48,22 @@ public class VehiclesApiGetVehicleStateIT {
     /**
      *
      *
+     * Returns the state and settings
+     *
+     * @throws ApiException
+     *          if the Api call fails
+     */
+    @Test
+    public void getStateAndSettingsTest() throws ApiException {
+        GetVehicleStateAndSettingsResponse response = vehiclesApi.getVehicleStateAndSettings(authorization, testId);
+
+        assertTrue("Expected response not received", response.getResponse() != null);
+
+    }
+
+    /**
+     *
+     *
      * Returns the state of charge in the battery.
      *
      * @throws ApiException
@@ -116,7 +132,7 @@ public class VehiclesApiGetVehicleStateIT {
      */
     @Test
     public void isMobileEnabledTest() throws ApiException {
-        MobileAccessResponse response = vehiclesApi.isMobileEnabled(authorization, testId);
+        IsMobileEnabledResponse response = vehiclesApi.isMobileEnabled(authorization, testId);
 
         assertTrue("Expected response not received", response.getResponse() != null);
     }
