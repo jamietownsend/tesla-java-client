@@ -16,9 +16,8 @@ import static junit.framework.TestCase.assertTrue;
  */
 public class VehiclesApiGetVehicleStateIT {
 
-    private static long testId = 0;
-
     private static final VehiclesApi vehiclesApi = new VehiclesApi();
+    private static long testId = 0;
     private static String authorization = "";
 
     /**
@@ -40,7 +39,7 @@ public class VehiclesApiGetVehicleStateIT {
     @BeforeClass
     public static void beforeClass() throws ApiException {
 
-        authorization = ConnectionManager.getAuthorization(TestDefaults.TEST_USER_EMAIL_ADDRESS, TestDefaults.TEST_USER_PASSWORD);
+        authorization = TeslaSecurityManager.getAuthorizationToken(TestDefaults.TEST_USER_EMAIL_ADDRESS, TestDefaults.TEST_USER_PASSWORD);
         vehiclesApi.setApiClient(vehiclesApi.getApiClient().setDebugging(TestDefaults.DEBUGGING_ENABLED));
         VehiclesApiGetVehicleStateIT.testId = getVehicleId(TestDefaults.TEST_VEHICLE_NUMBER);
     }

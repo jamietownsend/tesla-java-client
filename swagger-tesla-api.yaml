@@ -511,7 +511,7 @@ paths:
       description: Set the charge mode to max range (100% under the new percentage system introduced in 4.5). Use sparingly!
       tags:
         - Vehicles
-      operationId: Set Charge Max Range
+      operationId: Set Charge Limit To Maximum
       produces:
         - application/json
       parameters:
@@ -531,19 +531,39 @@ paths:
 
   '/api/1/vehicles/{vehicle_id}/command/set_charge_limit':
     post:
-      description: Set the charge limit to a custom percentage.
+      description: Set the charge limit to the minimum limit. The example on docs.timdorr.apiary.io of sending ?percent=x does not work. This call always sets to the minimum limit.
       tags:
         - Vehicles
-      operationId: Set Charge Limit
+      operationId: Set Charge Limit To Minimum
       produces:
         - application/json
       parameters:
         - $ref: "#/parameters/authorization_header"
         - $ref: "#/parameters/vehicle_id"
-        - name: percent
-          in: query
-          required: true
-          type: integer
+
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/AlterVehicleStateResponse'
+      x-unitTests: []
+      x-operation-settings:
+        CollectParameters: false
+        AllowDynamicQueryParameters: false
+        AllowDynamicFormParameters: false
+        IsMultiContentStreaming: false
+
+  '/api/1/vehicles/{vehicle_id}/command/charge_standard':
+    post:
+      description: Set the charge limit to the standard limit
+      tags:
+        - Vehicles
+      operationId: Set Charge Limit To Standard
+      produces:
+        - application/json
+      parameters:
+        - $ref: "#/parameters/authorization_header"
+        - $ref: "#/parameters/vehicle_id"
 
       responses:
         '200':
@@ -697,6 +717,7 @@ paths:
         AllowDynamicQueryParameters: false
         AllowDynamicFormParameters: false
         IsMultiContentStreaming: false
+
   '/api/1/vehicles/{vehicle_id}/command/auto_conditioning_start':
     post:
       description: Start the climate control system. Will cool or heat automatically, depending on set temperature.
@@ -726,6 +747,29 @@ paths:
       tags:
         - Vehicles
       operationId: Stop Temperature Regulation
+      produces:
+        - application/json
+      parameters:
+        - $ref: "#/parameters/authorization_header"
+        - $ref: "#/parameters/vehicle_id"
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/AlterVehicleStateResponse'
+      x-unitTests: []
+      x-operation-settings:
+        CollectParameters: false
+        AllowDynamicQueryParameters: false
+        AllowDynamicFormParameters: false
+        IsMultiContentStreaming: false
+
+  '/api/1/vehicles/{vehicle_id}/command/set_temps':
+    post:
+      description: Set the temperature target for the HVAC system to the minimum values
+      tags:
+        - Vehicles
+      operationId: Set Temperature Regulation To Minimum Temperature
       produces:
         - application/json
       parameters:
@@ -984,7 +1028,7 @@ definitions:
         properties:
           charging_state:
             type: string
-            description: '"Charging", "Disconnected", ...'
+            description: '"Complete", "Charging", "Starting", "Stopped", "Disconnected", ...'
           charge_limit_soc:
             type: integer
           charge_limit_soc_std:
@@ -1070,6 +1114,7 @@ definitions:
             type: integer
           charge_port_latch:
             type: string
+            description: '"Engaged", ...'
           charge_current_request:
             type: integer
           charge_current_request_max:

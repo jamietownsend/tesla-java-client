@@ -10,6 +10,7 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
 
 /**
@@ -17,9 +18,8 @@ import static junit.framework.TestCase.assertTrue;
  */
 public class VehiclesApiAlterVehicleStateIT {
 
-    private static long testId = 0;
-
     private static final VehiclesApi vehiclesApi = new VehiclesApi();
+    private static long testId = 0;
     private static String authorization = "";
 
     /**
@@ -39,7 +39,7 @@ public class VehiclesApiAlterVehicleStateIT {
     @BeforeClass
     public static void beforeClass() throws ApiException {
 
-        authorization = ConnectionManager.getAuthorization(TestDefaults.TEST_USER_EMAIL_ADDRESS, TestDefaults.TEST_USER_PASSWORD);
+        authorization = TeslaSecurityManager.getAuthorizationToken(TestDefaults.TEST_USER_EMAIL_ADDRESS, TestDefaults.TEST_USER_PASSWORD);
         vehiclesApi.setApiClient(vehiclesApi.getApiClient().setDebugging(TestDefaults.DEBUGGING_ENABLED));
         VehiclesApiAlterVehicleStateIT.testId = getFirstId();
     }
@@ -115,22 +115,118 @@ public class VehiclesApiAlterVehicleStateIT {
         assertTrue("Error - server reason: " + reason, response.getResponse().getResult());
     }
 
+    /**
+     * WARNING - if the current limit is not one of the minimum, standard or maximum limits, executing this test
+     * will reset the current limit to the standard limit.
+     */
     @Ignore
     @Test
-    public void setChargeTest() throws Exception {
-        AlterVehicleStateResponse response = vehiclesApi.setChargeLimit(authorization, testId, 23);
+    public void setChargeLimitToMinimumTest() throws Exception {
 
-        String reason = (response.getResponse() != null && response.getResponse().getReason() != null) ? response.getResponse().getReason() : "Reason found in response";
-        assertTrue("Error - server reason: " + reason, response.getResponse().getResult());
+        // figure out what the current limit is set to
+        ChargeStateResponseResponse getStateResponse = vehiclesApi.getChargeState(authorization, testId).getResponse();
+        int originalLimit = getStateResponse.getChargeLimitSoc();
+        int minLimit = getStateResponse.getChargeLimitSocMin();
+        int maxLimit = getStateResponse.getChargeLimitSocMax();
+
+        // if the original limit is already the minimum limit, set the limit to the maximum limit first
+        if (originalLimit == minLimit) {
+            vehiclesApi.setChargeLimitToMaximum(authorization, testId);
+
+            // check to see if that worked okay.
+            assertEquals("Whoops - problems setting up the test", maxLimit, (int) vehiclesApi.getChargeState(authorization, testId).getResponse().getChargeLimitSoc());
+        }
+
+        // this is the actual test - set the charge limit to the minimum value
+        AlterVehicleStateResponse setLimitResponse = vehiclesApi.setChargeLimitToMinimum(authorization, testId);
+        String reason = (setLimitResponse.getResponse() != null && setLimitResponse.getResponse().getReason() != null) ? setLimitResponse.getResponse().getReason() : "Reason found in response";
+
+        // test the response
+        int currentLimit = vehiclesApi.getChargeState(authorization, testId).getResponse().getChargeLimitSoc();
+        assertEquals("Charge limit was not successfully set to minimum", minLimit, currentLimit);
+
+        // reset the limit if necessary
+        if (originalLimit != currentLimit) {
+            // setting directly to standard doesn't always work, so set to max first
+            vehiclesApi.setChargeLimitToMaximum(authorization, testId);
+            if (originalLimit != maxLimit) {
+                vehiclesApi.setChargeLimitToStandard(authorization, testId);
+            }
+        }
+
+    }
+
+    @Test
+    public void setChargeLimitToStandardTest() throws Exception {
+
+        // figure out what the current limit is set to
+        ChargeStateResponseResponse getStateResponse = vehiclesApi.getChargeState(authorization, testId).getResponse();
+        int originalLimit = getStateResponse.getChargeLimitSoc();
+        int minLimit = getStateResponse.getChargeLimitSocMin();
+        int stdLimit = getStateResponse.getChargeLimitSocStd();
+        int maxLimit = getStateResponse.getChargeLimitSocMax();
+
+        // if the original limit is already the maximum limit, set the limit to the maximum limit first
+        if (originalLimit == stdLimit) {
+            vehiclesApi.setChargeLimitToMaximum(authorization, testId);
+
+            // check to see if that worked okay.
+            assertEquals("Whoops - problems setting up the test", maxLimit, (int) vehiclesApi.getChargeState(authorization, testId).getResponse().getChargeLimitSoc());
+        }
+
+        // this is the actual test - set the charge limit to the standard value
+        AlterVehicleStateResponse setLimitResponse = vehiclesApi.setChargeLimitToStandard(authorization, testId);
+        String reason = (setLimitResponse.getResponse() != null && setLimitResponse.getResponse().getReason() != null) ? setLimitResponse.getResponse().getReason() : "Reason found in response";
+
+        // test the response
+        int currentLimit = vehiclesApi.getChargeState(authorization, testId).getResponse().getChargeLimitSoc();
+        assertEquals("Charge limit was not successfully set to standard", stdLimit, currentLimit);
+
+        // reset the limit if necessary
+        if (originalLimit == maxLimit) {
+            vehiclesApi.setChargeLimitToMaximum(authorization, testId);
+        } else if (originalLimit == minLimit) {
+            vehiclesApi.setChargeLimitToMinimum(authorization, testId);
+        }
+
     }
 
     @Ignore
     @Test
-    public void setChargeMaxTest() throws Exception {
-        AlterVehicleStateResponse response = vehiclesApi.setChargeMaxRange(authorization, testId);
+    public void setChargeLimitToMaximumTest() throws Exception {
 
-        String reason = (response.getResponse() != null && response.getResponse().getReason() != null) ? response.getResponse().getReason() : "Reason found in response";
-        assertTrue("Error - server reason: " + reason, response.getResponse().getResult());
+        // figure out what the current limit is set to
+        ChargeStateResponseResponse getStateResponse = vehiclesApi.getChargeState(authorization, testId).getResponse();
+        int originalLimit = getStateResponse.getChargeLimitSoc();
+        int minLimit = getStateResponse.getChargeLimitSocMin();
+        int maxLimit = getStateResponse.getChargeLimitSocMax();
+
+        // if the original limit is already the maximum limit, set the limit to the minimum limit first
+        if (originalLimit == maxLimit) {
+            vehiclesApi.setChargeLimitToMinimum(authorization, testId);
+
+            // check to see if that worked okay.
+            assertEquals("Whoops - problems setting up the test", minLimit, (int) vehiclesApi.getChargeState(authorization, testId).getResponse().getChargeLimitSoc());
+        }
+
+        // this is the actual test - set the charge limit to the maximum value
+        AlterVehicleStateResponse setLimitResponse = vehiclesApi.setChargeLimitToMaximum(authorization, testId);
+        String reason = (setLimitResponse.getResponse() != null && setLimitResponse.getResponse().getReason() != null) ? setLimitResponse.getResponse().getReason() : "Reason found in response";
+
+        // test the response
+        int currentLimit = vehiclesApi.getChargeState(authorization, testId).getResponse().getChargeLimitSoc();
+        assertEquals("Charge limit was not successfully set to maximum", maxLimit, currentLimit);
+
+        // reset the limit if necessary
+        if (originalLimit != currentLimit) {
+            // setting directly to standard doesn't always work, so set to min first
+            if (originalLimit == minLimit) {
+                vehiclesApi.setChargeLimitToMinimum(authorization, testId);
+            } else {
+                vehiclesApi.setChargeLimitToStandard(authorization, testId);
+            }
+        }
+
     }
 
     // this one is always failing. I don't know why,  do YOU ??
