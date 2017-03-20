@@ -3,11 +3,15 @@
  */
 package com.servebeer.please.tesla_client;
 
+import com.servebeer.please.tesla_client.generated.handler.ApiCallback;
 import com.servebeer.please.tesla_client.generated.handler.ApiException;
 import com.servebeer.please.tesla_client.generated.handler.VehiclesApi;
 import com.servebeer.please.tesla_client.generated.model.*;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import java.util.List;
+import java.util.Map;
 
 import static junit.framework.TestCase.assertTrue;
 
@@ -70,9 +74,37 @@ public class VehiclesApiGetVehicleStateIT {
      */
     @Test
     public void getChargeStateTest() throws ApiException {
+        // TODO this should be implemented everywhere in future
+        vehiclesApi.getChargeStateAsync(authorization, testId, new ApiCallback<ChargeStateResponse>() {
+
+            @Override
+            public void onFailure(ApiException e, int statusCode, Map<String, List<String>> responseHeaders) {
+                System.err.println("Failed with status code: " + statusCode);
+                System.err.println("ApiException: " + e.getResponseBody());
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onSuccess(ChargeStateResponse result, int statusCode, Map<String, List<String>> responseHeaders) {
+                assertTrue("Success, but expected response not received", result.getResponse() != null);
+            }
+
+            @Override
+            public void onUploadProgress(long bytesWritten, long contentLength, boolean done) {
+
+            }
+
+            @Override
+            public void onDownloadProgress(long bytesRead, long contentLength, boolean done) {
+
+            }
+
+        });
+
+
+
         ChargeStateResponse response = vehiclesApi.getChargeState(authorization, testId);
 
-        assertTrue("Expected response not received", response.getResponse() != null);
 
     }
 

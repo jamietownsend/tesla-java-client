@@ -253,7 +253,7 @@ paths:
       description: >-
         Returns the state of charge in the battery.
 
-        Example response - {"response":{"charging_state":"Disconnected","charge_limit_soc":80,"charge_limit_soc_std":90,"charge_limit_soc_min":50,"charge_limit_soc_max":100,"charge_to_max_range":false,"battery_heater_on":false,"not_enough_power_to_heat":false,"max_range_charge_counter":0,"fast_charger_present":false,"fast_charger_type":"<invalid>","battery_range":96.43,"est_battery_range":61.87,"ideal_battery_range":76.96,"battery_level":32,"usable_battery_level":31,"battery_current":-0.6,"charge_energy_added":8.17,"charge_miles_added_rated":30.0,"charge_miles_added_ideal":24.0,"charger_voltage":0,"charger_pilot_current":0,"charger_actual_current":0,"charger_power":0,"time_to_full_charge":0.0,"trip_charging":false,"charge_rate":0.0,"charge_port_door_open":false,"motorized_charge_port":true,"scheduled_charging_start_time":null,"scheduled_charging_pending":false,"user_charge_enable_request":null,"charge_enable_request":true,"eu_vehicle":true,"charger_phases":null,"charge_port_latch":"Blocking","charge_current_request":24,"charge_current_request_max":24,"managed_charging_active":false,"managed_charging_user_canceled":false,"managed_charging_start_time":null}}
+        Example response - {"response":{"charging_state":"Disconnected","charge_limit_soc":80,"charge_limit_soc_std":90,"charge_limit_soc_min":50,"charge_limit_soc_max":100,"charge_to_max_range":false,"battery_heater_on":false,"not_enough_power_to_heat":false,"max_range_charge_counter":0,"fast_charger_present":false,"fast_charger_type":"<invalid>","battery_range":96.43,"est_battery_range":61.87,"ideal_battery_range":76.96,"battery_level":32,"usable_battery_level":31,"battery_current":-0.6,"charge_energy_added":8.17,"charge_miles_added_rated":30.0,"charge_miles_added_ideal":24.0,"charger_voltage":0,"charger_pilot_current":0,"charger_actual_current":0,"charger_power":0,"time_to_full_charge":0.0,"trip_charging":false,"charge_rate":0.0,"charge_port_door_open":false,"motorized_charge_port":true,"scheduled_charging_start_time":null,"scheduled_charging_pending":false,"user_charge_enable_request":null,"charge_enable_request":true,"eu_vehicle":true,"charger_phases":null,"charge_port_latch":"Blocking","charge_current_request":24,"charge_current_request_max":24,"charge_port_led_color":"White","managed_charging_active":false,"managed_charging_user_canceled":false,"managed_charging_start_time":null}}
       tags:
         - Vehicles
       operationId: Get Charge State
@@ -267,6 +267,10 @@ paths:
           description: ''
           schema:
             $ref: '#/definitions/ChargeStateResponse'
+        '500':
+          description: 'Internal Server Error'
+          schema:
+            $ref: '#/definitions/InternalServerErrorResponse'
       x-unitTests: []
       x-operation-settings:
         CollectParameters: false
@@ -531,16 +535,24 @@ paths:
 
   '/api/1/vehicles/{vehicle_id}/command/set_charge_limit':
     post:
-      description: Set the charge limit to the minimum limit. The example on docs.timdorr.apiary.io of sending ?percent=x does not work. This call always sets to the minimum limit.
+      description: Set the charge limit to the minimum limit.
       tags:
         - Vehicles
-      operationId: Set Charge Limit To Minimum
+      operationId: Set Charge Limit
       produces:
         - application/json
       parameters:
         - $ref: "#/parameters/authorization_header"
         - $ref: "#/parameters/vehicle_id"
-
+        - name: set_charge_limit_body
+          in: body
+          description: Attributes of the set_charge_limit call
+          schema:
+            required:
+              - percent
+            properties:
+              percent:
+                type: integer
       responses:
         '200':
           description: ''
@@ -1114,11 +1126,14 @@ definitions:
             type: integer
           charge_port_latch:
             type: string
-            description: '"Engaged", ...'
+            description: '"Engaged", "Blocking", "Disengaged", ...'
           charge_current_request:
             type: integer
           charge_current_request_max:
             type: integer
+          charge_port_led_color:
+            type: string
+            description: '"Off", "White", "FlashingGreen", ...'
           managed_charging_active:
             type: boolean
           managed_charging_user_canceled:
@@ -1348,6 +1363,17 @@ definitions:
           reason:
             type: string
 
+  InternalServerErrorResponse:
+    title: Internal Server Error Response
+    type: object
+    description: Oops!!
+    properties:
+      response:
+        type: string
+      error:
+        type: string
+      error_description:
+        type: string
 #  AlterVehicleStateResponse400:
 #    title: Vehicle State Response 400
 #    type: object

@@ -2,10 +2,7 @@ package com.servebeer.please.tesla_client;
 
 import com.servebeer.please.tesla_client.generated.handler.ApiException;
 import com.servebeer.please.tesla_client.generated.handler.VehiclesApi;
-import com.servebeer.please.tesla_client.generated.model.AlterVehicleStateResponse;
-import com.servebeer.please.tesla_client.generated.model.ChargeStateResponse;
-import com.servebeer.please.tesla_client.generated.model.ChargeStateResponseResponse;
-import com.servebeer.please.tesla_client.generated.model.ListAllVehiclesResponseResponse;
+import com.servebeer.please.tesla_client.generated.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,6 +23,9 @@ public class TeslaCommunicator {
     private static long vehicleId = 0L;
     private static List<ListAllVehiclesResponseResponse> managedVehicles = new ArrayList<>();
 
+    // the power that was drawn at some stage
+    int iCalculatedPower = 0;
+
     /**
      * hides the default constructor
      */
@@ -44,7 +44,7 @@ public class TeslaCommunicator {
     }
 
     /**
-     * Watts of Power being drawn by the charger
+     * Watts of Power that would be drawn by the charger
      */
     public int getChargerPower() throws ApiException {
 
@@ -59,17 +59,19 @@ public class TeslaCommunicator {
         // tesla seems to not sqare root the number of phases, so use my calculation instead of the number returned
 
         // assuming a PowerFactor of 1
-        int iCalculatePower = 0;
 
         // if the chargingState isn't "Charging", there's nothing to calculate
         if (response.getChargingState().equals("Charging")) {
             double iCalculatePowerAsDouble = Math.sqrt(response.getChargerPhases()) * response.getChargerActualCurrent() * response.getChargerVoltage();
-            iCalculatePower = Math.toIntExact(Math.round(iCalculatePowerAsDouble));
+            iCalculatedPower = Math.toIntExact(Math.round(iCalculatePowerAsDouble));
         }
 
-        return iCalculatePower;
+        return iCalculatedPower;
     }
 
+    public boolean isCharging() throws ApiException {
+        return vehiclesApi.getChargeState(authorizationToken, vehicleId).getResponse().getChargingState().equals("Charging");
+    }
 
     ChargeStateResponse getChargeState() throws ApiException {
         return vehiclesApi.getChargeState(authorizationToken, vehicleId);
@@ -93,8 +95,21 @@ public class TeslaCommunicator {
         return response;
     }
 
+    public Integer getBatteryLevel() throws ApiException {
+        ChargeStateResponse response = vehiclesApi.getChargeState(authorizationToken, vehicleId);
+        return response.getResponse().getBatteryLevel();
+    }
+
+    public Integer getChargeLimit() throws ApiException {
+        ChargeStateResponse response = vehiclesApi.getChargeState(authorizationToken, vehicleId);
+        return response.getResponse().getChargeLimitSoc();
+    }
+
     AlterVehicleStateResponse setChargeLimitToMinimum() throws ApiException {
-        return vehiclesApi.setChargeLimitToMinimum(authorizationToken, vehicleId);
+        SetChargeLimitBody body = new SetChargeLimitBody();
+        // TODO this should be retrieved from the car
+        body.setPercent(50);
+        return vehiclesApi.setChargeLimit(authorizationToken, vehicleId, body);
     }
 
     AlterVehicleStateResponse setChargeLimitToStandard() throws ApiException {
@@ -113,5 +128,11 @@ public class TeslaCommunicator {
 
     AlterVehicleStateResponse setValetMode(Boolean enabled, Integer password) throws ApiException {
         return vehiclesApi.setValetMode(authorizationToken, vehicleId, enabled, password);
+    }
+
+    public GpsLocation getGpsLocation() throws ApiException {
+        DriveStateResponse response = vehiclesApi.getDriveState(authorizationToken, vehicleId);
+        GpsLocation vehicleLocation = new GpsLocation(response.getResponse().getLatitude().floatValue(), response.getResponse().getLongitude().floatValue());
+        return vehicleLocation;
     }
 }

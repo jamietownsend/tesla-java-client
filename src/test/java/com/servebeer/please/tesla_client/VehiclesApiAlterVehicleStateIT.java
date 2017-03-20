@@ -115,10 +115,12 @@ public class VehiclesApiAlterVehicleStateIT {
         assertTrue("Error - server reason: " + reason, response.getResponse().getResult());
     }
 
+    // TODO this should be able to be deleted
     /**
      * WARNING - if the current limit is not one of the minimum, standard or maximum limits, executing this test
      * will reset the current limit to the standard limit.
      */
+/*
     @Ignore
     @Test
     public void setChargeLimitToMinimumTest() throws Exception {
@@ -138,7 +140,7 @@ public class VehiclesApiAlterVehicleStateIT {
         }
 
         // this is the actual test - set the charge limit to the minimum value
-        AlterVehicleStateResponse setLimitResponse = vehiclesApi.setChargeLimitToMinimum(authorization, testId);
+        AlterVehicleStateResponse setLimitResponse = vehiclesApi.setChargeLimit(authorization, testId, "50");
         String reason = (setLimitResponse.getResponse() != null && setLimitResponse.getResponse().getReason() != null) ? setLimitResponse.getResponse().getReason() : "Reason found in response";
 
         // test the response
@@ -153,6 +155,23 @@ public class VehiclesApiAlterVehicleStateIT {
                 vehiclesApi.setChargeLimitToStandard(authorization, testId);
             }
         }
+
+    }
+    */
+
+    @Test
+    public void setChargeLimitToSpecificLimitTest() throws Exception {
+        SetChargeLimitBody body = new SetChargeLimitBody();
+        body.setPercent(75);
+        vehiclesApi.setChargeLimit(authorization, testId, body);
+
+    }
+
+    @Test
+    public void setChargeLimitToMinimumTest() throws Exception {
+        SetChargeLimitBody body = new SetChargeLimitBody();
+        body.setPercent(50);
+        vehiclesApi.setChargeLimit(authorization, testId, body);
 
     }
 
@@ -186,7 +205,7 @@ public class VehiclesApiAlterVehicleStateIT {
         if (originalLimit == maxLimit) {
             vehiclesApi.setChargeLimitToMaximum(authorization, testId);
         } else if (originalLimit == minLimit) {
-            vehiclesApi.setChargeLimitToMinimum(authorization, testId);
+//TODO reenable            vehiclesApi.setChargeLimitToMinimum(authorization, testId);
         }
 
     }
@@ -203,7 +222,7 @@ public class VehiclesApiAlterVehicleStateIT {
 
         // if the original limit is already the maximum limit, set the limit to the minimum limit first
         if (originalLimit == maxLimit) {
-            vehiclesApi.setChargeLimitToMinimum(authorization, testId);
+//TODO reenable this            vehiclesApi.setChargeLimitToMinimum(authorization, testId);
 
             // check to see if that worked okay.
             assertEquals("Whoops - problems setting up the test", minLimit, (int) vehiclesApi.getChargeState(authorization, testId).getResponse().getChargeLimitSoc());
@@ -221,7 +240,7 @@ public class VehiclesApiAlterVehicleStateIT {
         if (originalLimit != currentLimit) {
             // setting directly to standard doesn't always work, so set to min first
             if (originalLimit == minLimit) {
-                vehiclesApi.setChargeLimitToMinimum(authorization, testId);
+//TODO reenable this                vehiclesApi.setChargeLimitToMinimum(authorization, testId);
             } else {
                 vehiclesApi.setChargeLimitToStandard(authorization, testId);
             }

@@ -23,7 +23,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <!-- swagger properties -->
-        <swagger-codegen-maven-plugin.version>2.2.1</swagger-codegen-maven-plugin.version>
+        <swagger-codegen-maven-plugin.version>2.2.2</swagger-codegen-maven-plugin.version>
         <swagger-codegen.default-package>com.servebeer.please.tesla-client.generated</swagger-codegen.default-package>
     </properties>
 

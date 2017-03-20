@@ -28,6 +28,11 @@ public class TeslaCommunicatorIT {
         teslaCommunicator = new TeslaCommunicator(TestDefaults.TEST_USER_EMAIL_ADDRESS, TestDefaults.TEST_USER_PASSWORD);
     }
 
+    @Test
+    public void getChargerPowerTest() throws Exception {
+        System.out.println("getChargerPower: " + teslaCommunicator.getChargerPower());
+    }
+
     /**
      * WARNING - if the current limit is not one of the minimum, standard or maximum limits, executing this test
      * will reset the current limit to the standard limit.
