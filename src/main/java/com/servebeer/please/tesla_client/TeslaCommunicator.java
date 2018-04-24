@@ -69,6 +69,10 @@ public class TeslaCommunicator {
         return iCalculatedPower;
     }
 
+    public boolean isConnected() throws ApiException {
+        return !vehiclesApi.getChargeState(authorizationToken, vehicleId).getResponse().getChargingState().equals("Disconnected");
+    }
+
     public boolean isCharging() throws ApiException {
         return vehiclesApi.getChargeState(authorizationToken, vehicleId).getResponse().getChargingState().equals("Charging");
     }

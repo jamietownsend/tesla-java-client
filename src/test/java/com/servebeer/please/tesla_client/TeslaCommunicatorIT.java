@@ -33,6 +33,11 @@ public class TeslaCommunicatorIT {
         System.out.println("getChargerPower: " + teslaCommunicator.getChargerPower());
     }
 
+    @Test
+    public void isConnectedTest() throws Exception {
+        System.out.println("isConnected: " + teslaCommunicator.isConnected());
+    }
+
     /**
      * WARNING - if the current limit is not one of the minimum, standard or maximum limits, executing this test
      * will reset the current limit to the standard limit.

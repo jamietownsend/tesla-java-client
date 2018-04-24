@@ -105,7 +105,7 @@ public class VehiclesApiGetVehicleStateIT {
 
         ChargeStateResponse response = vehiclesApi.getChargeState(authorization, testId);
 
-
+        assertTrue("Expected response not received", response.getResponse() != null);
     }
 
     /**
@@ -124,8 +124,6 @@ public class VehiclesApiGetVehicleStateIT {
     }
 
     /**
-     *
-     *
      * Returns the driving and position state of the vehicle.
      *
      * @throws ApiException
