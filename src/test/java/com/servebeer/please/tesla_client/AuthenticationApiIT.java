@@ -17,10 +17,12 @@ import static junit.framework.TestCase.assertEquals;
  */
 public class AuthenticationApiIT {
 
-    private static AuthenticationApi authenticationApi = new AuthenticationApi();
+    private static final AuthenticationApi authenticationApi = new AuthenticationApi();
 
     /**
      * run once for the class before any tests are executed
+     *
+     * @throws ApiException if the API call fails
      */
     @BeforeClass
     public static void beforeClass() throws ApiException {
@@ -28,14 +30,19 @@ public class AuthenticationApiIT {
         authenticationApi.setApiClient(authenticationApi.getApiClient().setDebugging(TestDefaults.DEBUGGING_ENABLED));
     }
 
-
     /**
      *
      *
-     * Performs the login. Takes in an plain text email and password, matching the owner's login information for [https://my.teslamotors.com/user/login](https://my.teslamotors.com/user/login). Returns a &#x60;access_token&#x60; which is passed along as a header with all future requests to authenticate the user. You must provide the &#x60;Authorization: Bearer {access_token}&#x60; header in all other requests. The current client ID and secret are [available here](http://pastebin.com/fX6ejAHd)
+     * Performs the login. Takes in an plain text email and password, matching
+     * the owner's login information for
+     * [https://my.teslamotors.com/user/login](https://my.teslamotors.com/user/login).
+     * Returns a &#x60;access_token&#x60; which is passed along as a header with
+     * all future requests to authenticate the user. You must provide the
+     * &#x60;Authorization: Bearer {access_token}&#x60; header in all other
+     * requests. The current client ID and secret are [available
+     * here](http://pastebin.com/fX6ejAHd)
      *
-     * @throws ApiException
-     *          if the Api call fails
+     * @throws ApiException if the API call fails
      */
     @Test
     public void getAnAccessTokenTest() throws ApiException {

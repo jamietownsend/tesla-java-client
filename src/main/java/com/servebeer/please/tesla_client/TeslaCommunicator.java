@@ -36,7 +36,7 @@ public class TeslaCommunicator {
         try {
             authorizationToken = getAuthorizationToken(userEmailAddress, userPassword);
             vehiclesApi.setApiClient(vehiclesApi.getApiClient().setDebugging(DEBUGGING_ENABLED));
-            List<ListAllVehiclesResponseResponse> managedVehicles = vehiclesApi.listAllVehicles(authorizationToken).getResponse();
+            managedVehicles = vehiclesApi.listAllVehicles(authorizationToken).getResponse();
             vehicleId = managedVehicles.get(0).getId();
         } catch (ApiException e) {
             log.error("Error initialising TeslaCommunicator: " + e.getMessage());
@@ -44,7 +44,8 @@ public class TeslaCommunicator {
     }
 
     /**
-     * Watts of Power that would be drawn by the charger
+     * @return the number of watts of power that is being (or would be) drawn by the charger
+     * @throws com.servebeer.please.tesla_client.generated.handler.ApiException
      */
     public int getChargerPower() throws ApiException {
 
@@ -82,7 +83,10 @@ public class TeslaCommunicator {
     }
 
     /**
-     * although this is a synchronous command, it might take a moment before it actually starts.
+     * Note: although this is a synchronous command, it might take a moment before it actually starts.
+     * 
+     * @return the standard Tesla response when state altering requests are made
+     * @throws com.servebeer.please.tesla_client.generated.handler.ApiException
      */
     public AlterVehicleStateResponse startCharging() throws ApiException {
         AlterVehicleStateResponse response = vehiclesApi.startCharging(authorizationToken, vehicleId);
@@ -92,6 +96,8 @@ public class TeslaCommunicator {
 
     /**
      * although this is a synchronous command, it might take a moment before it actually stops.
+     * @return the standard Tesla response when state altering requests are made
+     * @throws com.servebeer.please.tesla_client.generated.handler.ApiException 
      */
     public AlterVehicleStateResponse stopCharging() throws ApiException {
         AlterVehicleStateResponse response = vehiclesApi.stopCharging(authorizationToken, vehicleId);
@@ -109,6 +115,11 @@ public class TeslaCommunicator {
         return response.getResponse().getChargeLimitSoc();
     }
 
+    public Boolean getScheduledChargingPending() throws ApiException {
+        ChargeStateResponse response = vehiclesApi.getChargeState(authorizationToken, vehicleId);
+        return response.getResponse().getScheduledChargingPending();
+    }
+    
     AlterVehicleStateResponse setChargeLimitToMinimum() throws ApiException {
         SetChargeLimitBody body = new SetChargeLimitBody();
         // TODO this should be retrieved from the car

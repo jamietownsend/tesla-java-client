@@ -26,10 +26,10 @@ public class VehiclesApiGetVehicleStateIT {
 
     /**
      *
-     * Retieves the id of the first vehicleId so it can be used for further tests
+     * Retrieves the id of the first vehicleId so it can be used for further
+     * tests
      *
-     * @throws ApiException
-     *          if the Api call fails
+     * @throws ApiException if the API call fails
      */
     private static long getVehicleId(final int vehicleNumber) throws ApiException {
         ListAllVehiclesResponse listAllVehiclesResponse = vehiclesApi.listAllVehicles(authorization);
@@ -39,6 +39,8 @@ public class VehiclesApiGetVehicleStateIT {
 
     /**
      * run once for the class before any tests are executed
+     *
+     * @throws ApiException if the API call fails
      */
     @BeforeClass
     public static void beforeClass() throws ApiException {
@@ -53,8 +55,7 @@ public class VehiclesApiGetVehicleStateIT {
      *
      * Returns the state and settings
      *
-     * @throws ApiException
-     *          if the Api call fails
+     * @throws ApiException if the API call fails
      */
     @Test
     public void getStateAndSettingsTest() throws ApiException {
@@ -69,8 +70,7 @@ public class VehiclesApiGetVehicleStateIT {
      *
      * Returns the state of charge in the battery.
      *
-     * @throws ApiException
-     *          if the Api call fails
+     * @throws ApiException if the API call fails
      */
     @Test
     public void getChargeStateTest() throws ApiException {
@@ -101,8 +101,6 @@ public class VehiclesApiGetVehicleStateIT {
 
         });
 
-
-
         ChargeStateResponse response = vehiclesApi.getChargeState(authorization, testId);
 
         assertTrue("Expected response not received", response.getResponse() != null);
@@ -113,8 +111,7 @@ public class VehiclesApiGetVehicleStateIT {
      *
      * Returns the current temperature and climate control state.
      *
-     * @throws ApiException
-     *          if the Api call fails
+     * @throws ApiException if the API call fails
      */
     @Test
     public void getClimateStateTest() throws ApiException {
@@ -126,8 +123,7 @@ public class VehiclesApiGetVehicleStateIT {
     /**
      * Returns the driving and position state of the vehicle.
      *
-     * @throws ApiException
-     *          if the Api call fails
+     * @throws ApiException if the API call fails
      */
     @Test
     public void getDriveStateTest() throws ApiException {
@@ -139,10 +135,10 @@ public class VehiclesApiGetVehicleStateIT {
     /**
      *
      *
-     * Returns various information about the GUI settings of the car, such as unit format and range display.
+     * Returns various information about the GUI settings of the car, such as
+     * unit format and range display.
      *
-     * @throws ApiException
-     *          if the Api call fails
+     * @throws ApiException if the API call fails
      */
     @Test
     public void getGuiSettingsTest() throws ApiException {
@@ -156,8 +152,7 @@ public class VehiclesApiGetVehicleStateIT {
      *
      * Determines if mobile access to the vehicle is enabled.
      *
-     * @throws ApiException
-     *          if the Api call fails
+     * @throws ApiException if the API call fails
      */
     @Test
     public void isMobileEnabledTest() throws ApiException {
@@ -169,10 +164,10 @@ public class VehiclesApiGetVehicleStateIT {
     /**
      *
      *
-     * Retrieve a list of your owned vehicles (includes vehicles not yet shipped!)
+     * Retrieve a list of your owned vehicles (includes vehicles not yet
+     * shipped!)
      *
-     * @throws ApiException
-     *          if the Api call fails
+     * @throws ApiException if the API call fails
      */
     @Test
     public void listAllVehiclesTest() throws ApiException {
@@ -187,8 +182,7 @@ public class VehiclesApiGetVehicleStateIT {
      *
      * Returns the vehicle&#39;s physical state, such as which doors are open.
      *
-     * @throws ApiException
-     *          if the Api call fails
+     * @throws ApiException if the API call fails
      */
     @Test
     public void getVehicleStateTest() throws ApiException {

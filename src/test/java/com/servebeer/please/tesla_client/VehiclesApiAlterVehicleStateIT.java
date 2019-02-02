@@ -23,9 +23,9 @@ public class VehiclesApiAlterVehicleStateIT {
     private static String authorization = "";
 
     /**
-     * Retieves the id of the first vehicleId so it can be used for further tests
+     * Retrieves the id of the first vehicleId so it can be used for further tests
      *
-     * @throws ApiException if the Api call fails
+     * @throws ApiException if the API call fails
      */
     private static long getFirstId() throws ApiException {
         ListAllVehiclesResponse listAllVehiclesResponse = vehiclesApi.listAllVehicles(authorization);
@@ -35,6 +35,8 @@ public class VehiclesApiAlterVehicleStateIT {
 
     /**
      * run once for the class before any tests are executed
+     *
+     * @throws ApiException if the API call fails
      */
     @BeforeClass
     public static void beforeClass() throws ApiException {
@@ -114,50 +116,6 @@ public class VehiclesApiAlterVehicleStateIT {
         String reason = (response.getResponse() != null && response.getResponse().getReason() != null) ? response.getResponse().getReason() : "Reason found in response";
         assertTrue("Error - server reason: " + reason, response.getResponse().getResult());
     }
-
-    // TODO this should be able to be deleted
-    /**
-     * WARNING - if the current limit is not one of the minimum, standard or maximum limits, executing this test
-     * will reset the current limit to the standard limit.
-     */
-/*
-    @Ignore
-    @Test
-    public void setChargeLimitToMinimumTest() throws Exception {
-
-        // figure out what the current limit is set to
-        ChargeStateResponseResponse getStateResponse = vehiclesApi.getChargeState(authorization, testId).getResponse();
-        int originalLimit = getStateResponse.getChargeLimitSoc();
-        int minLimit = getStateResponse.getChargeLimitSocMin();
-        int maxLimit = getStateResponse.getChargeLimitSocMax();
-
-        // if the original limit is already the minimum limit, set the limit to the maximum limit first
-        if (originalLimit == minLimit) {
-            vehiclesApi.setChargeLimitToMaximum(authorization, testId);
-
-            // check to see if that worked okay.
-            assertEquals("Whoops - problems setting up the test", maxLimit, (int) vehiclesApi.getChargeState(authorization, testId).getResponse().getChargeLimitSoc());
-        }
-
-        // this is the actual test - set the charge limit to the minimum value
-        AlterVehicleStateResponse setLimitResponse = vehiclesApi.setChargeLimit(authorization, testId, "50");
-        String reason = (setLimitResponse.getResponse() != null && setLimitResponse.getResponse().getReason() != null) ? setLimitResponse.getResponse().getReason() : "Reason found in response";
-
-        // test the response
-        int currentLimit = vehiclesApi.getChargeState(authorization, testId).getResponse().getChargeLimitSoc();
-        assertEquals("Charge limit was not successfully set to minimum", minLimit, currentLimit);
-
-        // reset the limit if necessary
-        if (originalLimit != currentLimit) {
-            // setting directly to standard doesn't always work, so set to max first
-            vehiclesApi.setChargeLimitToMaximum(authorization, testId);
-            if (originalLimit != maxLimit) {
-                vehiclesApi.setChargeLimitToStandard(authorization, testId);
-            }
-        }
-
-    }
-    */
 
     @Test
     public void setChargeLimitToSpecificLimitTest() throws Exception {

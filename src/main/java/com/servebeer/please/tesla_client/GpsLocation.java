@@ -1,7 +1,5 @@
 package com.servebeer.please.tesla_client;
 
-import java.math.BigDecimal;
-
 public class GpsLocation {
     // declare private class level variables
     private float latitude;
